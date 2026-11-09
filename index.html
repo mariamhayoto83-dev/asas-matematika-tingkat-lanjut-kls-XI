@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASAS Matematika Tingkat Lanjut Kelas XI - SMAN 46 Maluku Tengah</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- KaTeX for Math Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <!-- SheetJS for Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#1e40af',
+                            lightBlue: '#3b82f6',
+                            green: '#10b981',
+                            darkGreen: '#047857',
+                            bg: '#f8fafc'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .katex-display { margin: 0.5em 0 !important; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- HEADER / NAVBAR -->
+    <header class="bg-gradient-to-r from-blue-900 via-blue-800 to-emerald-700 text-white shadow-lg no-print">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-blue-900 font-bold text-xl shadow">
+                    <i class="fa-solid font-bold text-2xl text-emerald-600">46</i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight md:text-xl">SMA NEGERI 46 MALUKU TENGAH</h1>
+                    <p class="text-xs text-blue-100">Asesmen Sumatif Akhir Semester (ASAS) • TP 2026/2027</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 text-sm font-medium">
+                <button onclick="switchTab('siswa')" id="nav-siswa" class="px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-user-graduate"></i> Ujian Siswa
+                </button>
+                <button onclick="switchTab('kisi-kisi')" id="nav-kisi" class="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/30 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-list-check"></i> Kisi-Kisi
+                </button>
+                <button onclick="openAdminModal()" id="nav-admin" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 transition flex items-center gap-1.5 text-white shadow">
+                    <i class="fa-solid fa-user-tie"></i> Portal Guru
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <main class="max-w-7xl mx-auto w-full px-4 py-6 flex-grow">
+
+        <!-- VIEW 1: REGISTRASI SISWA -->
+        <section id="view-login" class="max-w-xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+            <div class="bg-gradient-to-r from-blue-800 to-blue-600 p-6 text-white text-center">
+                <h2 class="text-2xl font-bold">ASAS MATEMATIKA TINGKAT LANJUT</h2>
+                <p class="text-blue-100 text-sm mt-1">Kelas XI IPA / Tingkat Lanjut • Semester Genap</p>
+            </div>
+
+            <form id="form-registrasi" onsubmit="mulaiUjian(event)" class="p-6 space-y-4">
+                <div class="bg-blue-50 border-l-4 border-blue-600 p-3 rounded text-xs text-blue-800">
+                    <p class="font-semibold"><i class="fa-solid fa-circle-info"></i> Petunjuk Pengisian:</p>
+                    <p>Isi data identitas diri dengan lengkap dan benar sebelum menekan tombol <strong>MULAI UJIAN</strong>.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Nama Lengkap Peserta</label>
+                    <input type="text" id="reg-nama" required placeholder="Contoh: Ahmad Fauzi" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Nomor Peserta Ujian</label>
+                        <input type="text" id="reg-nomor" required placeholder="11-046-001" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Kelas</label>
+                        <select id="reg-kelas" required class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                            <option value="XI-1">XI MIPA 1</option>
+                            <option value="XI-2">XI MIPA 2</option>
+                            <option value="XI-3">XI MIPA 3</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Mata Pelajaran</label>
+                        <input type="text" value="Matematika Tingkat Lanjut" disabled class="w-full px-4 py-2.5 bg-slate-100 border border-slate-300 rounded-lg text-slate-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Guru Pengampu</label>
+                        <input type="text" value="Mariam Hayoto, S.Pd." disabled class="w-full px-4 py-2.5 bg-slate-100 border border-slate-300 rounded-lg text-slate-500">
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg transition duration-200 transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play"></i> MULAI UJIAN SEKARANG
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- VIEW 2: HALAMAN UJIAN (AKTIF) -->
+        <section id="view-ujian" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Sidebar / Panel Info & Navigasi -->
+            <div class="lg:col-span-1 space-y-4">
+                <!-- Card Timer & Info -->
+                <div class="bg-white p-4 rounded-xl shadow-md border border-slate-200 text-center">
+                    <span class="text-xs font-semibold text-slate-500 uppercase">Sisa Waktu Ujian</span>
+                    <div id="timer-display" class="text-3xl font-extrabold text-blue-700 my-1 tracking-wider">90:00</div>
+                    <p class="text-xs text-slate-400">Waktu berjalan otomatis</p>
+                </div>
+
+                <!-- Card Navigasi Soal -->
+                <div class="bg-white p-4 rounded-xl shadow-md border border-slate-200">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-slate-700 text-sm">Navigasi Soal</h3>
+                        <span id="stat-dijawab" class="text-xs font-semibold px-2 py-0.5 bg-blue-100 text-blue-800 rounded-full">0/25 Terjawab</span>
+                    </div>
+                    <div id="grid-navigasi" class="grid grid-cols-5 gap-2 max-h-64 overflow-y-auto p-1">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between text-xs text-slate-500">
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-emerald-600 rounded-full inline-block"></span> Sudah</span>
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-slate-200 border border-slate-400 rounded-full inline-block"></span> Belum</span>
+                        <span class="flex items-center gap-1"><span class="w-3 h-3 bg-blue-600 rounded-full inline-block"></span> Aktif</span>
+                    </div>
+                </div>
+
+                <!-- Tombol Selesai -->
+                <button onclick="konfirmasiSelesai()" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check-double"></i> SELESAI UJIAN
+                </button>
+            </div>
+
+            <!-- Area Lembar Soal -->
+            <div class="lg:col-span-3">
+                <div class="bg-white rounded-xl shadow-md border border-slate-200 p-6 flex flex-col justify-between min-h-[500px]">
+                    <div>
+                        <!-- Header Soal -->
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
+                            <span class="font-bold text-lg text-blue-900" id="soal-header-title">Soal Nomor 1</span>
+                            <span id="soal-materi-badge" class="text-xs px-3 py-1 bg-slate-100 text-slate-600 rounded-full font-medium">Materi: Matriks</span>
+                        </div>
+
+                        <!-- Teks Soal -->
+                        <div id="soal-konten" class="text-base text-slate-800 leading-relaxed space-y-3 mb-6">
+                            <!-- Populated by JS -->
+                        </div>
+
+                        <!-- Pilihan Jawaban -->
+                        <div id="soal-pilihan" class="space-y-3">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Footer Navigasi Soal -->
+                    <div class="flex justify-between items-center border-t border-slate-100 pt-4 mt-6">
+                        <button id="btn-prev" onclick="pindahSoal(currentSoalIndex - 1)" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm font-semibold transition flex items-center gap-2">
+                            <i class="fa-solid fa-chevron-left"></i> Sebelumnya
+                        </button>
+                        <button id="btn-next" onclick="pindahSoal(currentSoalIndex + 1)" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-sm font-semibold transition flex items-center gap-2">
+                            Selanjutnya <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: HASIL UJIAN (SISWA) -->
+        <section id="view-hasil" class="hidden max-w-4xl mx-auto space-y-6">
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+                <div class="bg-gradient-to-r from-emerald-700 to-teal-600 p-6 text-white text-center">
+                    <i class="fa-solid fa-circle-check text-5xl mb-2 text-emerald-200"></i>
+                    <h2 class="text-2xl font-bold">Ujian Telah Selesai!</h2>
+                    <p class="text-emerald-100 text-sm">Terima kasih telah menyelesaikan Asesmen Sumatif Akhir Semester.</p>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <!-- Ringkasan Nilai -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="text-xs font-semibold text-slate-500 uppercase">Nilai Akhir</span>
+                            <div id="hasil-nilai" class="text-4xl font-extrabold text-blue-700 my-1">0</div>
+                            <span class="text-xs text-slate-400">Skor Maks: 100</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="text-xs font-semibold text-slate-500 uppercase">Jawaban Benar</span>
+                            <div id="hasil-benar" class="text-3xl font-extrabold text-emerald-600 my-1">0</div>
+                            <span class="text-xs text-slate-400">Dari 25 Soal</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="text-xs font-semibold text-slate-500 uppercase">Jawaban Salah</span>
+                            <div id="hasil-salah" class="text-3xl font-extrabold text-rose-600 my-1">0</div>
+                            <span class="text-xs text-slate-400">Dari 25 Soal</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                            <span class="text-xs font-semibold text-slate-500 uppercase">Waktu Tempuh</span>
+                            <div id="hasil-waktu" class="text-2xl font-bold text-slate-700 my-2">00:00</div>
+                            <span class="text-xs text-slate-400">Total Durasi</span>
+                        </div>
+                    </div>
+
+                    <!-- Detail Identitas -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-1 text-sm">
+                        <p><strong>Nama:</strong> <span id="hasil-nama">-</span></p>
+                        <p><strong>No. Peserta:</strong> <span id="hasil-nomor">-</span></p>
+                        <p><strong>Kelas:</strong> <span id="hasil-kelas">-</span></p>
+                        <p><strong>Sekolah:</strong> SMA Negeri 46 Maluku Tengah</p>
+                    </div>
+
+                    <!-- Pembahasan Soal Toggle -->
+                    <div>
+                        <button onclick="togglePembahasan()" class="w-full py-3 bg-slate-700 hover:bg-slate-800 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-book-open"></i> Lihat Kunci Jawaban & Pembahasan Lengkap
+                        </button>
+                    </div>
+
+                    <!-- Container Pembahasan (Hidden Default) -->
+                    <div id="container-pembahasan" class="hidden space-y-4 pt-4 border-t border-slate-200">
+                        <h3 class="font-bold text-lg text-slate-800">Review Pembahasan Soal</h3>
+                        <div id="list-pembahasan" class="space-y-4">
+                            <!-- Populated JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: KISI-KISI SOAL -->
+        <section id="view-kisi-kisi" class="hidden bg-white rounded-xl shadow-md border border-slate-200 p-6">
+            <div class="border-b border-slate-200 pb-4 mb-4">
+                <h2 class="text-xl font-bold text-blue-900">KISI-KISI ASESMEN SUMATIF AKHIR SEMESTER (ASAS)</h2>
+                <p class="text-sm text-slate-600">Matematika Tingkat Lanjut • Kelas XI • TP 2026/2027</p>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left border-collapse border border-slate-300">
+                    <thead class="bg-blue-800 text-white text-xs uppercase">
+                        <tr>
+                            <th class="p-3 border border-slate-300 text-center">No</th>
+                            <th class="p-3 border border-slate-300">Materi Ujian</th>
+                            <th class="p-3 border border-slate-300">Indikator Soal</th>
+                            <th class="p-3 border border-slate-300 text-center">Level Kognitif</th>
+                            <th class="p-3 border border-slate-300 text-center">Bentuk Soal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-kisi-kisi-body" class="divide-y divide-slate-200">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- VIEW 5: PORTAL GURU / ADMIN -->
+        <section id="view-admin" class="hidden space-y-6">
+            <!-- Header Admin -->
+            <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200 flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">Dashboard Guru / Administrator</h2>
+                    <p class="text-xs text-slate-500">Pengampu: Mariam Hayoto, S.Pd. • SMAN 46 Maluku Tengah</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="exportToExcel()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold transition flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-file-excel"></i> Unduh Excel
+                    </button>
+                    <button onclick="window.print()" class="px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg text-sm font-semibold transition flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-print"></i> Cetak PDF / Rekap
+                    </button>
+                    <button onclick="logoutAdmin()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm font-semibold transition">
+                        Keluar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabel Hasil Ujian Siswa -->
+            <div class="bg-white rounded-xl shadow-md border border-slate-200 p-6">
+                <h3 class="font-bold text-lg text-slate-800 mb-4">Rekapitulasi Hasil Ujian Peserta Didik</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left border-collapse border border-slate-200">
+                        <thead class="bg-slate-100 text-slate-700 text-xs uppercase">
+                            <tr>
+                                <th class="p-3 border">No</th>
+                                <th class="p-3 border">Nama Peserta</th>
+                                <th class="p-3 border">No. Ujian</th>
+                                <th class="p-3 border">Kelas</th>
+                                <th class="p-3 border text-center">Benar</th>
+                                <th class="p-3 border text-center">Salah</th>
+                                <th class="p-3 border text-center">Nilai Akhir</th>
+                                <th class="p-3 border text-center">Waktu Tempuh</th>
+                                <th class="p-3 border text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-admin-rekap" class="divide-y divide-slate-200">
+                            <!-- Populated JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-800 text-slate-400 py-4 text-center text-xs border-t border-slate-700 no-print">
+        <p>Disusun oleh: <strong>Mariam Hayoto, S.Pd.</strong> • Guru Matematika Tingkat Lanjut</p>
+        <p class="mt-1">SMA Negeri 46 Maluku Tengah • TP 2026/2027</p>
+    </footer>
+
+    <!-- MODAL ADMIN LOGIN -->
+    <div id="modal-admin-login" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 border border-slate-200">
+            <h3 class="text-xl font-bold text-slate-800 mb-2">Login Portal Guru</h3>
+            <p class="text-xs text-slate-500 mb-4">Masukkan kata sandi guru untuk melanjutkan.</p>
+            <form onsubmit="prosesLoginAdmin(event)">
+                <input type="password" id="admin-pass" required placeholder="Kata Sandi (Default: admin123)" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg mb-4 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                <div class="flex justify-end gap-2">
+                    <button type="button" onclick="closeAdminModal()" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg text-sm font-semibold">Batal</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-semibold hover:bg-emerald-700">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL CUSTOM CONFIRMATION (REPLACING ALERT) -->
+    <div id="modal-custom" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6 text-center space-y-4">
+            <div id="modal-custom-icon" class="text-4xl text-blue-600">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            <h3 id="modal-custom-title" class="text-xl font-bold text-slate-800">Konfirmasi</h3>
+            <p id="modal-custom-message" class="text-sm text-slate-600">Apakah Anda yakin?</p>
+            <div id="modal-custom-buttons" class="flex justify-center gap-3 pt-2">
+                <!-- JS populated -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIC APLIKASI -->
+    <script>
+        /* ==========================================================================
+           1. BANK SOAL & DATA KISI-KISI (25 SOAL: 13 MATRIKS, 12 POLINOMIAL)
+           ========================================================================== */
+        const bankSoal = [
+            // MATRIKS (1 - 13)
+            {
+                id: 1,
+                materi: "Matriks",
+                indikator: "Menentukan ordo dan elemen spesifik dari suatu matriks",
+                level: "C1",
+                pertanyaan: "Diberikan matriks $A = \\begin{pmatrix} 2 & -3 & 5 \\\\ 1 & 4 & -2 \\end{pmatrix}$. Ordo dari matriks $A$ dan nilai elemen $a_{23}$ berturut-turut adalah...",
+                pilihan: [
+                    "A. $2 \\times 3$ dan $-2$",
+                    "B. $3 \\times 2$ dan $5$",
+                    "C. $2 \\times 3$ dan $4$",
+                    "D. $3 \\times 2$ dan $-2$",
+                    "E. $2 \\times 2$ dan $5$"
+                ],
+                kunci: 0,
+                pembahasan: "Matriks $A$ memiliki 2 baris dan 3 kolom, sehingga ordonya $2 \\times 3$. Elemen $a_{23}$ menyatakan elemen baris ke-2 kolom ke-3, yaitu $-2$."
+            },
+            {
+                id: 2,
+                materi: "Matriks",
+                indikator: "Identifikasi jenis-jenis matriks (Matriks Identitas)",
+                level: "C1",
+                pertanyaan: "Manakah di antara matriks berikut yang merupakan matriks identitas ordo $2 \\times 2$?",
+                pilihan: [
+                    "A. $\\begin{pmatrix} 0 & 1 \\\\ 1 & 0 \\end{pmatrix}$",
+                    "B. $\\begin{pmatrix} 1 & 1 \\\\ 0 & 0 \\end{pmatrix}$",
+                    "C. $\\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix}$",
+                    "D. $\\begin{pmatrix} 1 & 0 \\\\ 1 & 0 \\end{pmatrix}$",
+                    "E. $\\begin{pmatrix} 0 & 0 \\\\ 0 & 0 \\end{pmatrix}$"
+                ],
+                kunci: 2,
+                pembahasan: "Matriks identitas $I$ adalah matriks persegi yang elemen diagonal utamanya bernilai 1 dan elemen lainnya bernilai 0. Jadi, $I = \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix}$."
+            },
+            {
+                id: 3,
+                materi: "Matriks",
+                indikator: "Menentukan nilai variabel menggunakan kesamaan dua matriks",
+                level: "C2",
+                pertanyaan: "Diketahui matriks $P = \\begin{pmatrix} 2a & 4 \\\\ 3 & b+1 \\end{pmatrix}$ dan $Q = \\begin{pmatrix} 8 & 4 \\\\ 3 & 5 \\end{pmatrix}$. Jika $P = Q$, nilai $a + b$ adalah...",
+                pilihan: [
+                    "A. 6",
+                    "B. 7",
+                    "C. 8",
+                    "D. 9",
+                    "E. 10"
+                ],
+                kunci: 2,
+                pembahasan: "Dari $P=Q$, diperoleh $2a = 8 \\Rightarrow a = 4$ dan $b+1 = 5 \\Rightarrow b = 4$. Maka $a+b = 4+4 = 8$."
+            },
+            {
+                id: 4,
+                materi: "Matriks",
+                indikator: "Melakukan operasi penjumlahan dan pengurangan matriks",
+                level: "C2",
+                pertanyaan: "Jika $A = \\begin{pmatrix} 3 & 1 \\\\ -2 & 4 \\end{pmatrix}$ dan $B = \\begin{pmatrix} 1 & 5 \\\\ 3 & -1 \\end{pmatrix}$, maka hasil dari $2A - B$ adalah...",
+                pilihan: [
+                    "A. $\\begin{pmatrix} 5 & -3 \\\\ -7 & 9 \\end{pmatrix}$",
+                    "B. $\\begin{pmatrix} 5 & 3 \\\\ -7 & 9 \\end{pmatrix}$",
+                    "C. $\\begin{pmatrix} 5 & -3 \\\\ 7 & 9 \\end{pmatrix}$",
+                    "D. $\\begin{pmatrix} 5 & -3 \\\\ -7 & 7 \\end{pmatrix}$",
+                    "E. $\\begin{pmatrix} 6 & -3 \\\\ -7 & 9 \\end{pmatrix}$"
+                ],
+                kunci: 0,
+                pembahasan: "$2A = \\begin{pmatrix} 6 & 2 \\\\ -4 & 8 \\end{pmatrix}$. Maka $2A - B = \\begin{pmatrix} 6-1 & 2-5 \\\\ -4-3 & 8-(-1) \\end{pmatrix} = \\begin{pmatrix} 5 & -3 \\\\ -7 & 9 \\end{pmatrix}$."
+            },
+            {
+                id: 5,
+                materi: "Matriks",
+                indikator: "Menghitung hasil perkalian dua matriks ordo 2x2",
+                level: "C3",
+                pertanyaan: "Hasil perkalian matriks $\\begin{pmatrix} 1 & 2 \\\\ 3 & 4 \\end{pmatrix} \\begin{pmatrix} 2 & 0 \\\\ -1 & 5 \\end{pmatrix}$ adalah...",
+                pilihan: [
+                    "A. $\\begin{pmatrix} 0 & 10 \\\\ 2 & 20 \\end{pmatrix}$",
+                    "B. $\\begin{pmatrix} 0 & 10 \\\\ 2 & 15 \\end{pmatrix}$",
+                    "C. $\\begin{pmatrix} 4 & 10 \\\\ 2 & 20 \\end{pmatrix}$",
+                    "D. $\\begin{pmatrix} 0 & 10 \\\\ 5 & 20 \\end{pmatrix}$",
+                    "E. $\\begin{pmatrix} -1 & 10 \\\\ 2 & 20 \\end{pmatrix}$"
+                ],
+                kunci: 0,
+                pembahasan: "Baris 1: $(1\\cdot 2 + 2\\cdot(-1), 1\\cdot 0 + 2\\cdot 5) = (0, 10)$. Baris 2: $(3\\cdot 2 + 4\\cdot(-1), 3\\cdot 0 + 4\\cdot 5) = (2, 20)$. Hasil = $\\begin{pmatrix} 0 & 10 \\\\ 2 & 20 \\end{pmatrix}$."
+            },
+            {
+                id: 6,
+                materi: "Matriks",
+                indikator: "Menghitung determinan matriks ordo 2x2",
+                level: "C2",
+                pertanyaan: "Determinan dari matriks $K = \\begin{pmatrix} 5 & -2 \\\\ 3 & 4 \\end{pmatrix}$ adalah...",
+                pilihan: [
+                    "A. 14",
+                    "B. 26",
+                    "C. 22",
+                    "D. -14",
+                    "E. -26"
+                ],
+                kunci: 1,
+                pembahasan: "$\\det(K) = (5)(4) - (-2)(3) = 20 - (-6) = 20 + 6 = 26$."
+            },
+            {
+                id: 7,
+                materi: "Matriks",
+                indikator: "Menghitung determinan matriks ordo 3x3 (Metode Sarrus)",
+                level: "C3",
+                pertanyaan: "Nilai determinan matriks $M = \\begin{pmatrix} 1 & 2 & 0 \\\\ 0 & 1 & 3 \\\\ 4 & 0 & 1 \\end{pmatrix}$ adalah...",
+                pilihan: [
+                    "A. 25",
+                    "B. 13",
+                    "C. -23",
+                    "D. 23",
+                    "E. 1"
+                ],
+                kunci: 0,
+                pembahasan: "Metode Sarrus: $\\det(M) = (1\\cdot 1\\cdot 1 + 2\\cdot 3\\cdot 4 + 0\\cdot 0\\cdot 0) - (0\\cdot 1\\cdot 4 + 1\\cdot 3\\cdot 0 + 2\\cdot 0\\cdot 1) = (1 + 24 + 0) - (0) = 25$."
+            },
+            {
+                id: 8,
+                materi: "Matriks",
+                indikator: "Menentukan invers matriks ordo 2x2",
+                level: "C3",
+                pertanyaan: "Invers dari matriks $A = \\begin{pmatrix} 4 & 1 \\\\ 7 & 2 \\end{pmatrix}$ adalah...",
+                pilihan: [
+                    "A. $\\begin{pmatrix} 2 & -1 \\\\ -7 & 4 \\end{pmatrix}$",
+                    "B. $\\begin{pmatrix} -2 & 1 \\\\ 7 & -4 \\end{pmatrix}$",
+                    "C. $\\begin{pmatrix} 2 & 1 \\\\ 7 & 4 \\end{pmatrix}$",
+                    "D. $\\begin{pmatrix} 4 & -1 \\\\ -7 & 2 \\end{pmatrix}$",
+                    "E. $\\begin{pmatrix} 1 & -2 \\\\ -4 & 7 \\end{pmatrix}$"
+                ],
+                kunci: 0,
+                pembahasan: "$\\det(A) = 4(2) - 1(7) = 1$. Maka $A^{-1} = \\frac{1}{1}\\begin{pmatrix} 2 & -1 \\\\ -7 & 4 \\end{pmatrix} = \\begin{pmatrix} 2 & -1 \\\\ -7 & 4 \\end{pmatrix}$."
+            },
+            {
+                id: 9,
+                materi: "Matriks",
+                indikator: "Menganalisis matriks singular",
+                level: "C4",
+                pertanyaan: "Matriks $A = \\begin{pmatrix} x-1 & 2 \\\\ 3 & x+4 \\end{pmatrix}$ tidak memiliki invers (singular). Nilai $x$ yang memenuhi adalah...",
+                pilihan: [
+                    "A. $x = -5$ atau $x = 2$",
+                    "B. $x = 5$ atau $x = -2$",
+                    "C. $x = -5$ atau $x = -2$",
+                    "D. $x = 5$ atau $x = 2$",
+                    "E. $x = 1$ atau $x = -4$"
+                ],
+                kunci: 0,
+                pembahasan: "Matriks singular $\\Rightarrow \\det(A) = 0$. $(x-1)(x+4) - 6 = 0 \\Rightarrow x^2 + 3x - 4 - 6 = 0 \\Rightarrow x^2 + 3x - 10 = 0 \\Rightarrow (x+5)(x-2) = 0$. Nilai $x = -5$ atau $x = 2$."
+            },
+            {
+                id: 10,
+                materi: "Matriks",
+                indikator: "Menyelesaikan persamaan matriks $AX = B$",
+                level: "C3",
+                pertanyaan: "Diketahui $A = \\begin{pmatrix} 1 & 2 \\\\ 1 & 3 \\end{pmatrix}$ dan $B = \\begin{pmatrix} 4 & 2 \\\\ 5 & 3 \\end{pmatrix}$. Jika $AX = B$, matriks $X$ adalah...",
+                pilihan: [
+                    "A. $\\begin{pmatrix} 2 & 0 \\\\ 1 & 1 \\end{pmatrix}$",
+                    "B. $\\begin{pmatrix} 2 & 1 \\\\ 1 & 0 \\end{pmatrix}$",
+                    "C. $\\begin{pmatrix} 1 & 0 \\\\ 2 & 1 \\end{pmatrix}$",
+                    "D. $\\begin{pmatrix} 2 & 0 \\\\ -1 & 1 \\end{pmatrix}$",
+                    "E. $\\begin{pmatrix} 0 & 2 \\\\ 1 & 1 \\end{pmatrix}$"
+                ],
+                kunci: 0,
+                pembahasan: "$X = A^{-1}B$. $A^{-1} = \\frac{1}{3-2} \\begin{pmatrix} 3 & -2 \\\\ -1 & 1 \\end{pmatrix} = \\begin{pmatrix} 3 & -2 \\\\ -1 & 1 \\end{pmatrix}$. $X = \\begin{pmatrix} 3 & -2 \\\\ -1 & 1 \\end{pmatrix}\\begin{pmatrix} 4 & 2 \\\\ 5 & 3 \\end{pmatrix} = \\begin{pmatrix} 12-10 & 6-6 \\\\ -4+5 & -2+3 \\end{pmatrix} = \\begin{pmatrix} 2 & 0 \\\\ 1 & 1 \\end{pmatrix}$."
+            },
+            {
+                id: 11,
+                materi: "Matriks",
+                indikator: "Memodelkan SPLDV ke dalam bentuk matriks",
+                level: "C3",
+                pertanyaan: "Bentuk persamaan matriks dari sistem persamaan linear $2x + 3y = 8$ dan $x - 4y = -7$ adalah...",
+                pilihan: [
+                    "A. $\\begin{pmatrix} 2 & 3 \\\\ 1 & -4 \\end{pmatrix} \\begin{pmatrix} x \\\\ y \\end{pmatrix} = \\begin{pmatrix} 8 \\\\ -7 \\end{pmatrix}$",
+                    "B. $\\begin{pmatrix} 2 & 3 \\\\ 1 & 4 \\end{pmatrix} \\begin{pmatrix} x \\\\ y \\end{pmatrix} = \\begin{pmatrix} 8 \\\\ -7 \\end{pmatrix}$",
+                    "C. $\\begin{pmatrix} 2 & 1 \\\\ 3 & -4 \\end{pmatrix} \\begin{pmatrix} x \\\\ y \\end{pmatrix} = \\begin{pmatrix} 8 \\\\ -7 \\end{pmatrix}$",
+                    "D. $\\begin{pmatrix} -4 & 3 \\\\ 1 & 2 \\end{pmatrix} \\begin{pmatrix} x \\\\ y \\end{pmatrix} = \\begin{pmatrix} 8 \\\\ -7 \\end{pmatrix}$",
+                    "E. $\\begin{pmatrix} 2 & 3 \\\\ -7 & 8 \\end{pmatrix} \\begin{pmatrix} x \\\\ y \\end{pmatrix} = \\begin{pmatrix} 1 \\\\ -4 \\end{pmatrix}$"
+                ],
+                kunci: 0,
+                pembahasan: "Kooefisien $x$ dan $y$ membentuk matriks $\\begin{pmatrix} 2 & 3 \\\\ 1 & -4 \\end{pmatrix}$, variabel $\\begin{pmatrix} x \\\\ y \\end{pmatrix}$, dan konstanta $\\begin{pmatrix} 8 \\\\ -7 \\end{pmatrix}$."
+            },
+            {
+                id: 12,
+                materi: "Matriks",
+                indikator: "Menganalisis penerapan matriks pada masalah kontekstual",
+                level: "C4",
+                pertanyaan: "Harga 2 buku dan 3 pensil adalah Rp12.000,00, sedangkan harga 3 buku dan 1 pensil adalah Rp11.000,00. Jika harga 1 buku = $x$ dan 1 pensil = $y$, matriks untuk menentukan nilai $x$ dan $y$ adalah...",
+                pilihan: [
+                    "A. $\\begin{pmatrix} x \\\\ y \\end{pmatrix} = \\frac{1}{-7} \\begin{pmatrix} 1 & -3 \\\\ -3 & 2 \\end{pmatrix} \\begin{pmatrix} 12000 \\\\ 11000 \\end{pmatrix}$",
+                    "B. $\\begin{pmatrix} x \\\\ y \\end{pmatrix} = \\frac{1}{7} \\begin{pmatrix} 1 & -3 \\\\ -3 & 2 \\end{pmatrix} \\begin{pmatrix} 12000 \\\\ 11000 \\end{pmatrix}$",
+                    "C. $\\begin{pmatrix} x \\\\ y \\end{pmatrix} = \\frac{1}{-7} \\begin{pmatrix} 2 & 3 \\\\ 3 & 1 \\end{pmatrix} \\begin{pmatrix} 12000 \\\\ 11000 \\end{pmatrix}$",
+                    "D. $\\begin{pmatrix} x \\\\ y \\end{pmatrix} = \\frac{1}{-7} \\begin{pmatrix} -1 & 3 \\\\ 3 & -2 \\end{pmatrix} \\begin{pmatrix} 12000 \\\\ 11000 \\end{pmatrix}$",
+                    "E. $\\begin{pmatrix} x \\\\ y \\end{pmatrix} = \\frac{1}{7} \\begin{pmatrix} 2 & -3 \\\\ -3 & 1 \\end{pmatrix} \\begin{pmatrix} 12000 \\\\ 11000 \\end{pmatrix}$"
+                ],
+                kunci: 0,
+                pembahasan: "$\\begin{pmatrix} 2 & 3 \\\\ 3 & 1 \\end{pmatrix} \\begin{pmatrix} x \\\\ y \\end{pmatrix} = \\begin{pmatrix} 12000 \\\\ 11000 \\end{pmatrix}$. Invers matriks koefisien: $\\det = 2(1)-3(3) = -7$. Invers $= \\frac{1}{-7} \\begin{pmatrix} 1 & -3 \\\\ -3 & 2 \\end{pmatrix}$."
+            },
+            {
+                id: 13,
+                materi: "Matriks",
+                indikator: "Memecahkan masalah sistem persamaan linear menggunakan aturan Cramer",
+                level: "C4",
+                pertanyaan: "Pada SPLDV $3x + 2y = 12$ dan $2x - y = 1$, nilai $D_x$ (determinan variabel $x$) adalah...",
+                pilihan: [
+                    "A. -14",
+                    "B. -7",
+                    "C. 14",
+                    "D. 7",
+                    "E. 21"
+                ],
+                kunci: 0,
+                pembahasan: "$D_x = \\det \\begin{pmatrix} 12 & 2 \\\\ 1 & -1 \\end{pmatrix} = (12)(-1) - (2)(1) = -12 - 2 = -14$."
+            },
+
+            // POLINOMIAL (14 - 25)
+            {
+                id: 14,
+                materi: "Polinomial",
+                indikator: "Menentukan derajat, koefisien, dan suku tetap polinomial",
+                level: "C1",
+                pertanyaan: "Derajat dan suku tetap dari polinomial $P(x) = 4x^5 - 2x^3 + 7x^2 - 9$ berturut-turut adalah...",
+                pilihan: [
+                    "A. 5 dan -9",
+                    "B. 5 dan 9",
+                    "C. 4 dan -9",
+                    "D. 3 dan -9",
+                    "E. 5 dan 4"
+                ],
+                kunci: 0,
+                pembahasan: "Derajat adalah pangkat tertinggi variabel $x$, yaitu 5. Suku tetap (konstanta) adalah $-9$."
+            },
+            {
+                id: 15,
+                materi: "Polinomial",
+                indikator: "Menghitung nilai polinomial menggunakan metode substitusi/Horner",
+                level: "C2",
+                pertanyaan: "Nilai polinomial $P(x) = 2x^3 - 4x^2 + 5x - 3$ untuk $x = 2$ adalah...",
+                pilihan: [
+                    "A. 5",
+                    "B. 7",
+                    "C. 9",
+                    "D. 11",
+                    "E. 13"
+                ],
+                kunci: 1,
+                pembahasan: "$P(2) = 2(2)^3 - 4(2)^2 + 5(2) - 3 = 2(8) - 4(4) + 10 - 3 = 16 - 16 + 10 - 3 = 7$."
+            },
+            {
+                id: 16,
+                materi: "Polinomial",
+                indikator: "Mengoperasi bentuk penjumlahan dan pengurangan polinomial",
+                level: "C2",
+                pertanyaan: "Jika $f(x) = 3x^4 - 2x^2 + 5x$ dan $g(x) = x^4 + 3x^3 - x^2 - 2x + 4$, maka $f(x) - g(x) = ...$",
+                pilihan: [
+                    "A. $2x^4 - 3x^3 - x^2 + 7x - 4$",
+                    "B. $2x^4 + 3x^3 - x^2 + 7x - 4$",
+                    "C. $2x^4 - 3x^3 - 3x^2 + 7x - 4$",
+                    "D. $4x^4 - 3x^3 - x^2 + 3x + 4$",
+                    "E. $2x^4 - 3x^3 - x^2 + 3x - 4$"
+                ],
+                kunci: 0,
+                pembahasan: "$f(x)-g(x) = (3-1)x^4 - 3x^3 + (-2-(-1))x^2 + (5-(-2))x - 4 = 2x^4 - 3x^3 - x^2 + 7x - 4$."
+            },
+            {
+                id: 17,
+                materi: "Polinomial",
+                indikator: "Melakukan operasi perkalian polinomial",
+                level: "C2",
+                pertanyaan: "Hasil dari perkalian polinomial $(2x^2 - 3)(x^2 + 4x - 1)$ adalah...",
+                pilihan: [
+                    "A. $2x^4 + 8x^3 - 5x^2 - 12x + 3$",
+                    "B. $2x^4 + 8x^3 - 2x^2 - 12x + 3$",
+                    "C. $2x^4 + 8x^3 - 5x^2 + 12x - 3$",
+                    "D. $2x^4 - 8x^3 - 5x^2 - 12x + 3$",
+                    "E. $2x^4 + 6x^3 - 5x^2 - 12x + 3$"
+                ],
+                kunci: 0,
+                pembahasan: "$2x^2(x^2+4x-1) - 3(x^2+4x-1) = (2x^4 + 8x^3 - 2x^2) - (3x^2 + 12x - 3) = 2x^4 + 8x^3 - 5x^2 - 12x + 3$."
+            },
+            {
+                id: 18,
+                materi: "Polinomial",
+                indikator: "Menentukan hasil bagi dan sisa pembagian polinomial",
+                level: "C3",
+                pertanyaan: "Hasil bagi dari pembagian polinomial $x^3 - 2x^2 + 4x - 5$ oleh $(x - 3)$ adalah...",
+                pilihan: [
+                    "A. $x^2 + x + 7$",
+                    "B. $x^2 - x + 7$",
+                    "C. $x^2 + x - 7$",
+                    "D. $x^2 + 5x + 7$",
+                    "E. $x^2 - 5x + 7$"
+                ],
+                kunci: 0,
+                pembahasan: "Gunakan Horner dengan $k = 3$: Koefisien [1, -2, 4, -5]. Baris Horner: 1 -> (3+ -2=1) -> (3+4=7) -> (21-5=16 sisa). Hasil bagi = $x^2 + x + 7$."
+            },
+            {
+                id: 19,
+                materi: "Polinomial",
+                indikator: "Mengaplikasikan Teorema Sisa untuk pembagian oleh $(x - k)$",
+                level: "C3",
+                pertanyaan: "Sisa pembagian polinomial $P(x) = 2x^3 - 5x^2 + 8x - 6$ oleh $(x + 1)$ adalah...",
+                pilihan: [
+                    "A. -21",
+                    "B. -15",
+                    "C. 9",
+                    "D. 15",
+                    "E. -9"
+                ],
+                kunci: 0,
+                pembahasan: "Sisa $S = P(-1) = 2(-1)^3 - 5(-1)^2 + 8(-1) - 6 = -2 - 5 - 8 - 6 = -21$."
+            },
+            {
+                id: 20,
+                materi: "Polinomial",
+                indikator: "Menganalisis nilai koefisien yang belum diketahui dengan Teorema Sisa",
+                level: "C4",
+                pertanyaan: "Jika polinomial $f(x) = x^4 - 3x^3 + ax^2 + 5x - 4$ dibagi oleh $(x - 2)$ bersisa 10, nilai $a$ adalah...",
+                pilihan: [
+                    "A. 3",
+                    "B. 4",
+                    "C. 5",
+                    "D. 6",
+                    "E. 7"
+                ],
+                kunci: 0,
+                pembahasan: "$f(2) = 10 \\Rightarrow 2^4 - 3(2)^3 + a(2)^2 + 5(2) - 4 = 10 \\Rightarrow 16 - 24 + 4a + 10 - 4 = 10 \\Rightarrow 4a - 2 = 10 \\Rightarrow 4a = 12 \\Rightarrow a = 3$."
+            },
+            {
+                id: 21,
+                materi: "Polinomial",
+                indikator: "Mengidentifikasi faktor dari suatu polinomial menggunakan Teorema Faktor",
+                level: "C3",
+                pertanyaan: "Salah satu faktor dari polinomial $P(x) = x^3 - 4x^2 + x + 6$ adalah...",
+                pilihan: [
+                    "A. $(x - 1)$",
+                    "B. $(x - 2)$",
+                    "C. $(x + 3)$",
+                    "D. $(x + 2)$",
+                    "E. $(x - 4)$"
+                ],
+                kunci: 1,
+                pembahasan: "Cek $P(2) = 2^3 - 4(2)^2 + 2 + 6 = 8 - 16 + 2 + 6 = 0$. Karena $P(2) = 0$, maka $(x - 2)$ adalah faktornya."
+            },
+            {
+                id: 22,
+                materi: "Polinomial",
+                indikator: "Menganalisis faktor-faktor linier dari persamaan polinomial derajat tinggi",
+                level: "C4",
+                pertanyaan: "Jumlah seluruh akar-akar real dari persamaan polinomial $x^3 - 6x^2 + 11x - 6 = 0$ adalah...",
+                pilihan: [
+                    "A. 5",
+                    "B. 6",
+                    "C. 7",
+                    "D. 11",
+                    "E. -6"
+                ],
+                kunci: 1,
+                pembahasan: "Berdasarkan Teorema Vieta, jumlah akar-akar $x_1 + x_2 + x_3 = -\\frac{b}{a} = -\\frac{-6}{1} = 6$."
+            },
+            {
+                id: 23,
+                materi: "Polinomial",
+                indikator: "Menentukan sisa pembagian oleh bentuk $(x - a)(x - b)$",
+                level: "C4",
+                pertanyaan: "Suatu polinomial $f(x)$ jika dibagi $(x - 2)$ bersisa 5 dan jika dibagi $(x + 1)$ bersisa -4. Sisa pembagian $f(x)$ oleh $(x^2 - x - 2)$ adalah...",
+                pilihan: [
+                    "A. $3x - 1$",
+                    "B. $3x + 1$",
+                    "C. $2x + 1$",
+                    "D. $3x - 2$",
+                    "E. $x + 3$"
+                ],
+                kunci: 0,
+                pembahasan: "Misal sisa $S(x) = ax + b$. $S(2) = 2a + b = 5$ dan $S(-1) = -a + b = -4$. Pengurangan persamaan: $3a = 9 \\Rightarrow a = 3$. Subtitle: $b = -1$. Sisa $= 3x - 1$."
+            },
+            {
+                id: 24,
+                materi: "Polinomial",
+                indikator: "Memecahkan masalah kontekstual volume bangun ruang dengan polinomial",
+                level: "C4",
+                pertanyaan: "Sebuah balok memiliki panjang $(x + 2)$ cm, lebar $x$ cm, dan tinggi $(x - 1)$ cm. Jika volume balok dinyatakan sebagai polinomial $V(x)$, maka $V(x) = ...$",
+                pilihan: [
+                    "A. $x^3 + x^2 - 2x$",
+                    "B. $x^3 - x^2 - 2x$",
+                    "C. $x^3 + 2x^2 - x$",
+                    "D. $x^3 + 3x^2 - 2x$",
+                    "E. $x^3 + x^2 + 2x$"
+                ],
+                kunci: 0,
+                pembahasan: "$V(x) = p \\cdot l \\cdot t = (x+2)(x)(x-1) = x(x^2 + x - 2) = x^3 + x^2 - 2x$."
+            },
+            {
+                id: 25,
+                materi: "Polinomial",
+                indikator: "Penerapan fungsi biaya/produksi berbasis polinomial",
+                level: "C4",
+                pertanyaan: "Fungsi keuntungan suatu perusahaan dinyatakan oleh $K(x) = -x^3 + 9x^2 - 15x - 5$ (dalam jutaan rupiah) dengan $x$ barang. Keuntungan saat diproduksi $x = 5$ unit adalah...",
+                pilihan: [
+                    "A. Rp20.000.000,00",
+                    "B. Rp25.000.000,00",
+                    "C. Rp30.000.000,00",
+                    "D. Rp15.000.000,00",
+                    "E. Rp35.000.000,00"
+                ],
+                kunci: 0,
+                pembahasan: "$K(5) = -(5)^3 + 9(5)^2 - 15(5) - 5 = -125 + 225 - 75 - 5 = 20$ (dalam juta) = Rp20.000.000,00."
+            }
+        ];
+
+        /* ==========================================================================
+           2. STATE APLIKASI GLOBAL
+           ========================================================================== */
+        let currentSoalIndex = 0;
+        let jawabanSiswa = new Array(25).fill(null);
+        let timerInterval = null;
+        let sisaWaktu = 90 * 60; // 90 menit dalam detik
+        let dataPeserta = { nama: "", nomor: "", kelas: "" };
+        let rekapAdmin = [
+            { nama: "Budi Santoso", nomor: "11-046-005", kelas: "XI MIPA 1", benar: 22, salah: 3, nilai: 88, waktu: "65:20" },
+            { nama: "Siti Rahma", nomor: "11-046-012", kelas: "XI MIPA 2", benar: 25, salah: 0, nilai: 100, waktu: "58:10" }
+        ];
+
+        /* ==========================================================================
+           3. ROUTING & INISIALISASI
+           ========================================================================== */
+        window.onload = function() {
+            renderKisiKisi();
+            renderMath();
+        };
+
+        function renderMath() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: '$$', right: '$$', display: true},
+                    {left: '$', right: '$', display: false}
+                ],
+                throwOnError: false
+            });
+        }
+
+        function switchTab(tab) {
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('view-ujian').classList.add('hidden');
+            document.getElementById('view-hasil').classList.add('hidden');
+            document.getElementById('view-kisi-kisi').classList.add('hidden');
+            document.getElementById('view-admin').classList.add('hidden');
+
+            if (tab === 'siswa') {
+                if (dataPeserta.nama !== "") {
+                    document.getElementById('view-ujian').classList.remove('hidden');
+                } else {
+                    document.getElementById('view-login').classList.remove('hidden');
+                }
+            } else if (tab === 'kisi-kisi') {
+                document.getElementById('view-kisi-kisi').classList.remove('hidden');
+            } else if (tab === 'admin') {
+                document.getElementById('view-admin').classList.remove('hidden');
+            }
+        }
+
+        /* ==========================================================================
+           4. UJIAN SISWA & TIMER LOGIC
+           ========================================================================== */
+        function mulaiUjian(e) {
+            e.preventDefault();
+            dataPeserta.nama = document.getElementById('reg-nama').value;
+            dataPeserta.nomor = document.getElementById('reg-nomor').value;
+            dataPeserta.kelas = document.getElementById('reg-kelas').value;
+
+            document.getElementById('view-login').classList.add('hidden');
+            document.getElementById('view-ujian').classList.remove('hidden');
+
+            renderNavigasi();
+            tampilkanSoal(0);
+            startTimer();
+        }
+
+        function startTimer() {
+            const timerElem = document.getElementById('timer-display');
+            timerInterval = setInterval(() => {
+                sisaWaktu--;
+                let m = Math.floor(sisaWaktu / 60);
+                let s = sisaWaktu % 60;
+                timerElem.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+
+                if (sisaWaktu === 300) { // Warning 5 menit
+                    showCustomModal("Peringatan Waktu", "Waktu ujian tersisa 5 menit lagi!", "info");
+                }
+
+                if (sisaWaktu <= 0) {
+                    clearInterval(timerInterval);
+                    showCustomModal("Waktu Habis", "Waktu pengerjaan telah habis. Jawaban Anda disimpan otomatis.", "info", () => {
+                        prosesSelesaiUjian();
+                    });
+                }
+            }, 1000);
+        }
+
+        function renderNavigasi() {
+            const container = document.getElementById('grid-navigasi');
+            container.innerHTML = "";
+            let dijawabCount = 0;
+
+            bankSoal.forEach((soal, idx) => {
+                const isAnswered = jawabanSiswa[idx] !== null;
+                const isCurrent = currentSoalIndex === idx;
+
+                if (isAnswered) dijawabCount++;
+
+                let bgClass = "bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300";
+                if (isAnswered) bgClass = "bg-emerald-600 text-white font-semibold";
+                if (isCurrent) bgClass = "bg-blue-600 text-white font-bold ring-2 ring-blue-300";
+
+                const btn = document.createElement('button');
+                btn.className = `w-full py-2 text-xs rounded-lg border transition ${bgClass}`;
+                btn.innerText = idx + 1;
+                btn.onclick = () => pindahSoal(idx);
+                container.appendChild(btn);
+            });
+
+            document.getElementById('stat-dijawab').innerText = `${dijawabCount}/25 Terjawab`;
+        }
+
+        function tampilkanSoal(index) {
+            if (index < 0 || index >= bankSoal.length) return;
+            currentSoalIndex = index;
+
+            const soal = bankSoal[index];
+            document.getElementById('soal-header-title').innerText = `Soal Nomor ${index + 1}`;
+            document.getElementById('soal-materi-badge').innerText = `Materi: ${soal.materi}`;
+            document.getElementById('soal-konten').innerHTML = soal.pertanyaan;
+
+            const pilihanContainer = document.getElementById('soal-pilihan');
+            pilihanContainer.innerHTML = "";
+
+            soal.pilihan.forEach((pil, pIdx) => {
+                const isSelected = jawabanSiswa[index] === pIdx;
+                const div = document.createElement('div');
+                div.className = `p-3.5 border-2 rounded-xl cursor-pointer transition flex items-center space-x-3 ${
+                    isSelected ? 'border-blue-600 bg-blue-50/60' : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                }`;
+                div.onclick = () => pilihJawaban(index, pIdx);
+                div.innerHTML = `
+                    <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center text-xs ${
+                        isSelected ? 'border-blue-600 bg-blue-600 text-white' : 'border-slate-400'
+                    }">
+                        ${isSelected ? '<i class="fa-solid fa-check"></i>' : ''}
+                    </div>
+                    <div class="text-sm text-slate-800">${pil}</div>
+                `;
+                pilihanContainer.appendChild(div);
+            });
+
+            // Update Navigasi Status Button
+            document.getElementById('btn-prev').disabled = index === 0;
+            document.getElementById('btn-next').disabled = index === bankSoal.length - 1;
+
+            renderNavigasi();
+            renderMath();
+        }
+
+        function pilihJawaban(soalIdx, pilIdx) {
+            jawabanSiswa[soalIdx] = pilIdx;
+            tampilkanSoal(soalIdx);
+        }
+
+        function pindahSoal(index) {
+            tampilkanSoal(index);
+        }
+
+        function konfirmasiSelesai() {
+            const lumDijawab = jawabanSiswa.filter(j => j === null).length;
+            let pesan = "Apakah Anda yakin ingin mengakhiri ujian ini?";
+            if (lumDijawab > 0) {
+                pesan = `Masih ada ${lumDijawab} soal yang belum dijawab. Yakin ingin mengakhiri?`;
+            }
+            showCustomModal("Konfirmasi Selesai", pesan, "confirm", () => {
+                prosesSelesaiUjian();
+            });
+        }
+
+        /* ==========================================================================
+           5. PENILAIAN OTOMATIS & HASIL
+           ========================================================================== */
+        function prosesSelesaiUjian() {
+            clearInterval(timerInterval);
+
+            let benar = 0;
+            jawabanSiswa.forEach((jaw, idx) => {
+                if (jaw === bankSoal[idx].kunci) {
+                    benar++;
+                }
+            });
+
+            let salah = 25 - benar;
+            let nilai = Math.round((benar / 25) * 100);
+            let waktuDipakaiDetik = (90 * 60) - sisaWaktu;
+            let mUsed = Math.floor(waktuDipakaiDetik / 60);
+            let sUsed = waktuDipakaiDetik % 60;
+            let waktuStr = `${mUsed} menit ${sUsed} detik`;
+
+            // Display Hasil Siswa
+            document.getElementById('hasil-nama').innerText = dataPeserta.nama;
+            document.getElementById('hasil-nomor').innerText = dataPeserta.nomor;
+            document.getElementById('hasil-kelas').innerText = dataPeserta.kelas;
+            document.getElementById('hasil-nilai').innerText = nilai;
+            document.getElementById('hasil-benar').innerText = benar;
+            document.getElementById('hasil-salah').innerText = salah;
+            document.getElementById('hasil-waktu').innerText = `${mUsed}:${sUsed < 10 ? '0'+sUsed : sUsed}`;
+
+            // Simpan ke Rekap Admin
+            rekapAdmin.push({
+                nama: dataPeserta.nama,
+                nomor: dataPeserta.nomor,
+                kelas: dataPeserta.kelas,
+                benar: benar,
+                salah: salah,
+                nilai: nilai,
+                waktu: `${mUsed}:${sUsed < 10 ? '0'+sUsed : sUsed}`
+            });
+
+            renderPembahasan();
+
+            document.getElementById('view-ujian').classList.add('hidden');
+            document.getElementById('view-hasil').classList.remove('hidden');
+            renderMath();
+        }
+
+        function renderPembahasan() {
+            const list = document.getElementById('list-pembahasan');
+            list.innerHTML = "";
+
+            bankSoal.forEach((soal, idx) => {
+                const jawSiswa = jawabanSiswa[idx];
+                const isCorrect = jawSiswa === soal.kunci;
+
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-xl border ${isCorrect ? 'border-emerald-200 bg-emerald-50/30' : 'border-rose-200 bg-rose-50/30'}`;
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="font-bold text-sm text-slate-800">No ${idx+1}. (${soal.materi} - ${soal.level})</span>
+                        <span class="text-xs px-2.5 py-1 rounded-full font-semibold ${isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                            ${isCorrect ? 'Benar (+4)' : 'Salah (0)'}
+                        </span>
+                    </div>
+                    <div class="text-sm mb-3">${soal.pertanyaan}</div>
+                    <div class="text-xs space-y-1 mb-3">
+                        <p><strong>Jawaban Anda:</strong> ${jawSiswa !== null ? soal.pilihan[jawSiswa] : '<span class="text-rose-600">Tidak dijawab</span>'}</p>
+                        <p><strong>Kunci Jawaban:</strong> <span class="text-emerald-700 font-semibold">${soal.pilihan[soal.kunci]}</span></p>
+                    </div>
+                    <div class="p-3 bg-white rounded-lg border border-slate-200 text-xs text-slate-700">
+                        <strong><i class="fa-solid fa-lightbulb text-amber-500"></i> Pembahasan:</strong>
+                        <p class="mt-1">${soal.pembahasan}</p>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        function togglePembahasan() {
+            const c = document.getElementById('container-pembahasan');
+            c.classList.toggle('hidden');
+            renderMath();
+        }
+
+        /* ==========================================================================
+           6. KISI-KISI SOAL RENDER
+           ========================================================================== */
+        function renderKisiKisi() {
+            const tbody = document.getElementById('table-kisi-kisi-body');
+            tbody.innerHTML = "";
+
+            bankSoal.forEach((soal) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 border-b border-slate-200";
+                tr.innerHTML = `
+                    <td class="p-3 border text-center font-medium">${soal.id}</td>
+                    <td class="p-3 border font-semibold text-blue-900">${soal.materi}</td>
+                    <td class="p-3 border">${soal.indikator}</td>
+                    <td class="p-3 border text-center"><span class="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full font-bold">${soal.level}</span></td>
+                    <td class="p-3 border text-center text-slate-600">Pilihan Ganda</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* ==========================================================================
+           7. PORTAL ADMIN & GURU LOGIC
+           ========================================================================== */
+        function openAdminModal() {
+            document.getElementById('modal-admin-login').classList.remove('hidden');
+        }
+
+        function closeAdminModal() {
+            document.getElementById('modal-admin-login').classList.add('hidden');
+        }
+
+        function prosesLoginAdmin(e) {
+            e.preventDefault();
+            const pass = document.getElementById('admin-pass').value;
+            if (pass === 'admin123') {
+                closeAdminModal();
+                renderAdminRekap();
+                switchTab('admin');
+            } else {
+                showCustomModal("Login Gagal", "Kata sandi yang Anda masukkan salah!", "info");
+            }
+        }
+
+        function logoutAdmin() {
+            switchTab('siswa');
+        }
+
+        function renderAdminRekap() {
+            const tbody = document.getElementById('table-admin-rekap');
+            tbody.innerHTML = "";
+
+            rekapAdmin.forEach((row, i) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50";
+                tr.innerHTML = `
+                    <td class="p-3 border text-center">${i+1}</td>
+                    <td class="p-3 border font-semibold text-slate-800">${row.nama}</td>
+                    <td class="p-3 border">${row.nomor}</td>
+                    <td class="p-3 border">${row.kelas}</td>
+                    <td class="p-3 border text-center text-emerald-600 font-bold">${row.benar}</td>
+                    <td class="p-3 border text-center text-rose-600 font-bold">${row.salah}</td>
+                    <td class="p-3 border text-center font-extrabold text-blue-700 text-base">${row.nilai}</td>
+                    <td class="p-3 border text-center text-xs text-slate-500">${row.waktu}</td>
+                    <td class="p-3 border text-center">
+                        <button onclick="hapusRekap(${i})" class="text-rose-600 hover:text-rose-800 px-2 py-1"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function hapusRekap(idx) {
+            showCustomModal("Hapus Data", "Yakin ingin menghapus data ini?", "confirm", () => {
+                rekapAdmin.splice(idx, 1);
+                renderAdminRekap();
+            });
+        }
+
+        function exportToExcel() {
+            const ws = XLSX.utils.json_to_sheet(rekapAdmin);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Hasil Ujian ASAS");
+            XLSX.writeFile(wb, "Rekap_Nilai_ASAS_Matematika_XI.xlsx");
+        }
+
+        /* ==========================================================================
+           8. MODAL CUSTOM SYSTEM (GANTI ALERT/CONFIRM)
+           ========================================================================== */
+        function showCustomModal(title, message, type = "info", onConfirm = null) {
+            const modal = document.getElementById('modal-custom');
+            document.getElementById('modal-custom-title').innerText = title;
+            document.getElementById('modal-custom-message').innerText = message;
+            
+            const iconElem = document.getElementById('modal-custom-icon');
+            if (type === "confirm") {
+                iconElem.innerHTML = '<i class="fa-solid fa-circle-question text-amber-500"></i>';
+            } else {
+                iconElem.innerHTML = '<i class="fa-solid fa-circle-info text-blue-600"></i>';
+            }
+
+            const btnContainer = document.getElementById('modal-custom-buttons');
+            btnContainer.innerHTML = "";
+
+            if (type === "confirm") {
+                const btnBatal = document.createElement('button');
+                btnBatal.className = "px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-sm font-semibold";
+                btnBatal.innerText = "Batal";
+                btnBatal.onclick = () => modal.classList.add('hidden');
+
+                const btnYa = document.createElement('button');
+                btnYa.className = "px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-semibold";
+                btnYa.innerText = "Ya, Lanjutkan";
+                btnYa.onclick = () => {
+                    modal.classList.add('hidden');
+                    if (onConfirm) onConfirm();
+                };
+
+                btnContainer.appendChild(btnBatal);
+                btnContainer.appendChild(btnYa);
+            } else {
+                const btnOk = document.createElement('button');
+                btnOk.className = "px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold";
+                btnOk.innerText = "OK";
+                btnOk.onclick = () => {
+                    modal.classList.add('hidden');
+                    if (onConfirm) onConfirm();
+                };
+                btnContainer.appendChild(btnOk);
+            }
+
+            modal.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
